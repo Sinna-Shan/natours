@@ -1,8 +1,13 @@
 const fs = require('fs');
+const morgan = require('morgan');
 const express = require('express');
 const app = express();
+
+// MIDDLEWARES
+app.use(morgan('dev'));
 app.use(express.json());
 
+// ROUTEHANDLERS
 const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
 );
@@ -76,7 +81,7 @@ const deleteTour = (req, res) => {
       message: 'Invalid ID provided!',
     });
   }
-  
+
   tours.pop(id);
 
   res.status(204).send({
@@ -85,20 +90,53 @@ const deleteTour = (req, res) => {
   });
 };
 
-app.route('/api/v1/tours').get(getAllTours).post(createTour);
-app
-  .route('/api/v1/tours/:id')
-  .get(getTourById)
-  .patch(updateTour)
-  .delete(deleteTour);
+const getAllUsers = (req, res) => {
+  res.status(500).json({
+    status: 'error',
+    results: 'this route is not implemented yet',
+  });
+};
+const createUser = (req, res) => {
+  res.status(500).json({
+    status: 'error',
+    results: 'this route is not implemented yet',
+  });
+};
+const getUserById = (req, res) => {
+  res.status(500).json({
+    status: 'error',
+    results: 'this route is not implemented yet',
+  });
+};
+const updateUser = (req, res) => {
+  res.status(500).json({
+    status: 'error',
+    results: 'this route is not implemented yet',
+  });
+};
+const deleteUser = (req, res) => {
+  res.status(500).json({
+    status: 'error',
+    results: 'this route is not implemented yet',
+  });
+};
 
+// ROUTES
+
+const tourRouter = express.Router();
+const userRouter = express.Router();
+
+tourRouter.route('/').get(getAllTours).post(createTour);
+tourRouter.route('/:id').get(getTourById).patch(updateTour).delete(deleteTour);
+
+userRouter.route('/').get(getAllUsers).post(createUser);
+userRouter.route('/:id').get(getUserById).patch(updateUser).delete(deleteUser);
+
+app.use('/api/v1/tours', tourRouter);
+app.use('/api/v1/users', userRouter);
+
+// START SERVER
 const port = 3000;
 app.listen(port, () => {
   console.log(`listening on ${port}...`);
 });
-
-/*app.get('/api/v1/tours', getAllTours);
-app.post('/api/v1/tours', createTour);
-app.get('/api/v1/tours/:id', getTourById);
-app.patch('/api/v1/tours/:id', updateTour);
-app.delete('/api/v1/tours/:id', deleteTour);*/
