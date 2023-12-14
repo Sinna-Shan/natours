@@ -1,0 +1,19 @@
+{
+  "name": "natours",
+  "version": "1.0.0",
+  "description": "learning node, express, mongoDB",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sinna-Shan/natours.git"
+  },
+  "author": "Noah Shan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Sinna-Shan/natours/issues"
+  },
+  "homepage": "https://github.com/Sinna-Shan/natours#readme"
+}
