@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/Sinna-Shan/natours/issues"
   },
-  "homepage": "https://github.com/Sinna-Shan/natours#readme"
+  "homepage": "https://github.com/Sinna-Shan/natours#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
 }
