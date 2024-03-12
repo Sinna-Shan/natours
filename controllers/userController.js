@@ -1,70 +1,81 @@
-exports.getAllUsers = async (req, res) => {
-    try{
-        res.status(200).json({
-            message: 'Success',
-            data: 'get all Users'
-        })
-    }catch(err){
-        res.status(400).json({
-            message: 'failed',
-            err: err.message
-        })
-    }
-}
+const catchAsync = require('./../utils/catchAsync');
+const User = require('./../models/userModel');
+const AppError = require('./../utils/appError');
 
-exports.createUser = async (req, res) => {
-    try{
-        res.status(200).json({
-            message: 'Success',
-            data: 'User created successfully',
-        })
-    }catch(err){
-        res.status(400).json({
-            message: 'failed',
-            err: err.message
-        })
-    }
-}
+const filterObj = function (obj, ...allowedFields) {
+  const newObj = {};
+  allowedFields.forEach((el) => (newObj[el] = obj[el]));
+  return newObj;
+};
 
-exports.getUserById = async (req, res) => {
-    try{
-        res.status(200).json({
-            message: 'Success',
-            data: 'got a User',
-        })
-    }catch(err){
-        res.status(400).json({
-            message: 'failed',
-            err: err.message
-        })
-    }
-}
+exports.getAllUsers = catchAsync(async (req, res, next) => {
+  const users = await User.find();
+  res.status(200).json({
+    message: 'Success',
+    count: users.length,
+    data: {
+      users,
+    },
+  });
+});
 
-exports.updateUser = async (req, res) => {
-    try{
-        res.status(200).json({
-            message: 'Success',
-            data: 'User updated successfully',
-        })
-    }catch(err){
-        res.status(400).json({
-            message: 'failed',
-            err: err.message
-        })
-    }
-}
+exports.createUser = catchAsync(async (req, res, next) => {
+  res.status(200).json({
+    message: 'Success',
+    data: 'User created successfully',
+  });
+});
 
-exports.deleteUser = async (req, res) => {
-    try{
-        res.status(200).json({
-            message: 'Success',
-            data: 'User deleted successfully',
-        })
-    }catch(err){
-        res.status(400).json({
-            message: 'failed',
-            err: err.message
-        })
-    }
-}
+exports.getUserById = catchAsync(async (req, res, next) => {
+  res.status(200).json({
+    message: 'Success',
+    data: 'got a User',
+  });
+});
 
+exports.updateUser = catchAsync(async (req, res, next) => {
+  res.status(200).json({
+    message: 'Success',
+    data: 'User updated successfully',
+  });
+});
+
+exports.deleteUser = catchAsync(async (req, res, next) => {
+  res.status(204).json({
+    message: 'Success',
+    data: 'User deleted successfully',
+  });
+});
+
+exports.updateMe = catchAsync(async (req, res, next) => {
+  // create error if user POSTs password data
+  if (req.body.password || req.body.passwordConfirm) {
+    return next(
+      new AppError(
+        'this route is not for password updates, Please use /updateMyPassword route.',
+        400
+      )
+    );
+  }
+  //   filtered out unwanted fields not allowed to be updated
+  const filteredObj = filterObj(req.body, 'name', 'email');
+  //   update user document
+  const updated = await User.findByIdAndUpdate(req.user.id, filteredObj, {
+    new: true,
+    runValidators: true,
+  });
+
+  res.status(200).json({
+    status: 'success',
+    data: updated,
+  });
+});
+
+exports.deleteMe = catchAsync(async (req, res, next) =>{{
+
+    await User.findByIdAndUpdate(req.user.id, {active: false});
+    res.status(204).json({
+        status: 'success',
+        data: null
+    })
+}})
