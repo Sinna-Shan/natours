@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 const slugify = require('slugify');
 const validator = require('validator');
 
+const User = require('./userModel')
+
 const tourSchema = new mongoose.Schema(
   {
     name: {
@@ -47,12 +49,12 @@ const tourSchema = new mongoose.Schema(
     priceDiscount: {
       type: Number,
       validate: {
-        validator:function (val) {
+        validator: function (val) {
           // only runs on new document creation
-        return val < this.price;
+          return val < this.price;
+        },
+        message: 'discount ({VALUE}) should be less than price',
       },
-      message: 'discount ({VALUE}) should be less than price',
-    },
     },
     summary: {
       type: String,
@@ -78,6 +80,31 @@ const tourSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    startLocation: {
+      // Geo JSON for geo specific data
+      type: {
+        type: String,
+        default: 'Point',
+        enum: ['Point'],
+      },
+      coordinates: [Number],
+      address: String,
+      description: String,
+    },
+    locations: [
+      {
+        type: {
+          type: String,
+          default: 'Point',
+          enum: ['Point'],
+        },
+        coordinates: [Number],
+        address: String,
+        description: String,
+        day: Number,
+      },
+    ],
+    guides: Array,
   },
   {
     toJSON: {
@@ -106,6 +133,13 @@ tourSchema.pre('save', function (next) {
 // tourSchema.post('save', function (doc, next) {
 //   next();
 // });
+
+// // Embedding guides in to tour document
+// tourSchema.pre('save',async function(next){
+//   const guidesPromises = this.guides.map(async id => await User.findById(id));
+//   this.guides = await Promise.all(guidesPromises);
+//   next();
+// })
 
 //Query middleware
 // this key word points to the currently executing query

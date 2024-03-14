@@ -11,7 +11,7 @@ mongoose
   .catch((err) => console.error(err));
 
 const data = JSON.parse(
-  fs.readFileSync(`${__dirname}/tours-simple.json`, 'utf-8')
+  fs.readFileSync(`${__dirname}/tours.json`, 'utf-8')
 );
 
 // IMPORT DATA TO DATA BASE
