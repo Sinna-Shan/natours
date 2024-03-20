@@ -20,12 +20,7 @@ exports.getAllUsers = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.createUser = catchAsync(async (req, res, next) => {
-  res.status(200).json({
-    message: 'Success',
-    data: 'User created successfully',
-  });
-});
+exports.createUser = factory.createOne(User);
 
 exports.getUserById = catchAsync(async (req, res, next) => {
   res.status(200).json({
@@ -34,12 +29,8 @@ exports.getUserById = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.updateUser = catchAsync(async (req, res, next) => {
-  res.status(200).json({
-    message: 'Success',
-    data: 'User updated successfully',
-  });
-});
+// do not update password with this
+exports.updateUser = factory.updateOne(User);
 
 exports.deleteUser = factory.deleteOne(User);
 
