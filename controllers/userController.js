@@ -1,6 +1,7 @@
 const catchAsync = require('./../utils/catchAsync');
 const User = require('./../models/userModel');
 const AppError = require('./../utils/appError');
+const factory = require('./handlerFactory');
 
 const filterObj = function (obj, ...allowedFields) {
   const newObj = {};
@@ -40,12 +41,7 @@ exports.updateUser = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.deleteUser = catchAsync(async (req, res, next) => {
-  res.status(204).json({
-    message: 'Success',
-    data: 'User deleted successfully',
-  });
-});
+exports.deleteUser = factory.deleteOne(User);
 
 exports.updateMe = catchAsync(async (req, res, next) => {
   // create error if user POSTs password data
@@ -71,11 +67,12 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.deleteMe = catchAsync(async (req, res, next) =>{{
-
-    await User.findByIdAndUpdate(req.user.id, {active: false});
+exports.deleteMe = catchAsync(async (req, res, next) => {
+  {
+    await User.findByIdAndUpdate(req.user.id, { active: false });
     res.status(204).json({
-        status: 'success',
-        data: null
-    })
-}})
+      status: 'success',
+      data: null,
+    });
+  }
+});

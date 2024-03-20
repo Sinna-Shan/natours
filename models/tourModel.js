@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const slugify = require('slugify');
 const validator = require('validator');
 
-const User = require('./userModel')
+const User = require('./userModel');
 
 const tourSchema = new mongoose.Schema(
   {
@@ -104,7 +104,13 @@ const tourSchema = new mongoose.Schema(
         day: Number,
       },
     ],
-    guides: Array,
+    // guides: Array, // for embedding
+    guides: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User',
+      },
+    ],
   },
   {
     toJSON: {
@@ -119,6 +125,13 @@ const tourSchema = new mongoose.Schema(
 //setting properties when getting data (not save in DB)
 tourSchema.virtual('durationWeeks').get(function () {
   return (this.duration / 7).toFixed(2);
+});
+
+// virtual populate
+tourSchema.virtual('reviews', {
+  ref: 'Review',
+  foreignField: 'tour',
+  localField: '_id',
 });
 
 // Document Middleware
@@ -149,8 +162,17 @@ tourSchema.pre(/^find/, function (next) {
   next();
 });
 
+tourSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'guides',
+    select: '-__v -passwordChangedAt',
+  });
+  next();
+});
+
 //AGGREGATION MIDDLEWARE
 tourSchema.pre('aggregate', function (next) {});
+
 const Tour = mongoose.model('Tour', tourSchema);
 
 module.exports = Tour;
